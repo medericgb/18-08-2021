@@ -1,60 +1,43 @@
 class Coffeeshop
   attr_accessor :name, :menu, :orders
 
-  def initialize(name, menu, orders=[])
+  def initialize(name, menu)
     @name = name
     @menu = menu
-    @orders = orders
+    @orders = []
   end
 
-  def orders
-    p @orders
-  end
-
-  def add_order(name)
-    menu_item = Array.new
-    @menu.each do |el|
-      menu_item.push(el[:item])
-    end
-    if menu_item.include?(name)
-      @orders.push(name)
-      p "Order added !"
+  def add_order(order_name)
+    if @menu.map{|i| i[:item]}.include?(order_name)
+      @orders << order_name
+      p "Order #{order_name} added !"
     else
       p "This item is unavailable, sorry!"
     end
   end
 
   def fulfill_order
-    item = @orders[0]
-    p @orders.empty? ? "No orders to fulfill!" : "The #{item} is ready!"
-    @orders.shift
+    p @orders.empty? ? "No orders to fulfill!" : "The #{@orders.shift} is ready!"
   end
 
   def cheapest_item
-    cheap_item = @menu.sort_by { |item| item[:price] }.first
-    p cheap_item[:item]
+    p @menu.sort_by { |item| item[:price] }.first[:item]
   end
 
   def drinks_only
-    drinks = Array.new
-    @menu.each do |el|
-      if el[:type] == "drink"
-        drinks.push(el[:item])
-      end
-    end
-    p drinks
+    p @menu.select{ |x| x[:type] == "drink"}.map{|x| x[:item] }
   end
 
 end
 
-cs1 = Coffeeshop.new("CS1 Tokyo Coffee", [{:item => "hot chocolate", :type => "drink", :price => 12}, {:item => "cinnamon roll", :type => "food", :price => 25}, {:item => "iced coffee", :type => "drink", :price => 12}, {:item => "vanilla chai latte", :type => "drink", :price => 32}, {:item => "lemon tea", :type => "drink", :price => 5}], [])
+cs1 = Coffeeshop.new("Tokyo Coffee", [{:item => "hot chocolate", :type => "drink", :price => 12}, {:item => "cinnamon roll", :type => "food", :price => 25}, {:item => "iced coffee", :type => "drink", :price => 12}, {:item => "vanilla chai latte", :type => "drink", :price => 32}, {:item => "lemon tea", :type => "drink", :price => 5}])
 
 cs1.add_order("hot cocoa") # "Sorry, this item is unavailable."
 # A Little Spice coffee shop does not sell hot cocoa
 
 cs1.add_order("cinnamon roll") #  "Order added!"
 cs1.add_order("iced coffee") # "Order added!"
-cs1.orders # ["cinnamon roll", "iced coffee"]
+p cs1.orders # ["cinnamon roll", "iced coffee"]
 # All current orders are listed.
 
 cs1.fulfill_order # "The cinnamon roll is ready!"
